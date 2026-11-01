@@ -1,0 +1,244 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Observatório do Orçamento — Bento Gonçalves
+   Tokens de design. Tudo abaixo consome estas variáveis, então
+   trocar de tema não exige tocar em nenhum componente.
+   ============================================================ */
+
+:root {
+  --cor-tela: #FBFAF7;
+  --cor-superficie: #FFFFFF;
+  --cor-superficie-2: #F5F3EE;
+  --cor-borda: #E5E1D8;
+  --cor-borda-forte: #D2CCBE;
+  --cor-texto: #1A1A17;
+  --cor-texto-2: #57534A;
+  --cor-texto-3: #857F72;
+
+  --cor-acento: #1F6B3A;
+  --cor-acento-suave: #E8F2EA;
+  --cor-positivo: #1F6B3A;
+  --cor-positivo-suave: #E8F2EA;
+  --cor-negativo: #9B2C2C;
+  --cor-negativo-suave: #FBE9E9;
+  --cor-alerta: #96610A;
+  --cor-alerta-suave: #FBF1DA;
+}
+
+html[data-tema='escuro'] {
+  --cor-tela: #141412;
+  --cor-superficie: #1D1D1A;
+  --cor-superficie-2: #26251F;
+  --cor-borda: #33322B;
+  --cor-borda-forte: #474538;
+  --cor-texto: #F2F0E9;
+  --cor-texto-2: #B5B0A3;
+  --cor-texto-3: #8A8578;
+
+  --cor-acento: #6FBF86;
+  --cor-acento-suave: #1F2E23;
+  --cor-positivo: #6FBF86;
+  --cor-positivo-suave: #1F2E23;
+  --cor-negativo: #E89490;
+  --cor-negativo-suave: #33201F;
+  --cor-alerta: #E0B05A;
+  --cor-alerta-suave: #322816;
+}
+
+@layer base {
+  * {
+    @apply border-borda;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  body {
+    @apply bg-tela text-texto font-sans antialiased;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif font-semibold tracking-tight;
+  }
+
+  :where(button, a, input, select, [tabindex]):focus-visible {
+    @apply outline-2 outline-offset-2 outline-acento;
+  }
+}
+
+@layer components {
+  /* ---------- cartões ---------- */
+  .cartao {
+    @apply bg-superficie border border-borda rounded-cartao shadow-cartao;
+  }
+
+  .cartao-pad {
+    @apply bg-superficie border border-borda rounded-cartao shadow-cartao p-5;
+  }
+
+  /* ---------- tipografia de seção ---------- */
+  .eyebrow {
+    @apply text-2xs font-semibold uppercase tracking-[0.14em] text-texto-3 mb-2;
+  }
+
+  .titulo-secao {
+    @apply font-serif text-2xl sm:text-3xl font-semibold tracking-tight;
+  }
+
+  .subtitulo-secao {
+    @apply mt-2 text-texto-2 max-w-3xl;
+  }
+
+  /* ---------- controles ---------- */
+  .botao {
+    @apply inline-flex items-center justify-center gap-2 px-3.5 py-2 rounded-controle
+           border border-borda-forte bg-superficie text-[13px] font-medium text-texto
+           transition-colors duration-150 hover:bg-superficie-2 cursor-pointer;
+  }
+
+  .botao-ativo {
+    @apply bg-acento-suave text-acento border-acento;
+  }
+
+  .botao-icone {
+    @apply grid place-items-center w-8 h-8 rounded-controle border border-borda-forte
+           bg-superficie text-texto-2 hover:bg-superficie-2 hover:text-texto
+           transition-colors cursor-pointer;
+  }
+
+  .entrada {
+    @apply w-full px-3 py-2 rounded-controle border border-borda-forte
+           bg-superficie-2 text-texto text-sm
+           focus:border-acento focus:outline-none focus:ring-2 focus:ring-acento-suave;
+  }
+
+  .rotulo {
+    @apply block text-xs font-medium text-texto-2 mb-1.5;
+  }
+
+  /* ---------- tabelas ---------- */
+  .tabela {
+    @apply w-full text-sm border-collapse;
+  }
+
+  .tabela thead th {
+    @apply text-left text-2xs font-semibold uppercase tracking-wider text-texto-3
+           pb-2 px-3 border-b border-borda whitespace-nowrap;
+  }
+
+  .tabela tbody td {
+    @apply py-2.5 px-3 border-b border-borda align-middle;
+  }
+
+  .tabela tbody tr:hover {
+    @apply bg-superficie-2;
+  }
+
+  .tabela .num {
+    @apply text-right tabular-nums font-mono text-[13px];
+  }
+
+  /* ---------- notas e etiquetas ---------- */
+  .nota {
+    @apply text-xs text-texto-3 leading-relaxed;
+  }
+
+  .etiqueta {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-2xs font-semibold uppercase tracking-wide;
+  }
+
+  .etiqueta-positivo {
+    @apply bg-positivo-suave text-positivo;
+  }
+
+  .etiqueta-negativo {
+    @apply bg-negativo-suave text-negativo;
+  }
+
+  .etiqueta-alerta {
+    @apply bg-alerta-suave text-alerta;
+  }
+
+  .etiqueta-neutra {
+    @apply bg-superficie-2 text-texto-2;
+  }
+
+  /* ---------- KPI ---------- */
+  .kpi {
+    @apply bg-superficie border border-borda rounded-cartao p-4 shadow-cartao;
+  }
+
+  .kpi-rotulo {
+    @apply text-2xs font-semibold uppercase tracking-[0.1em] text-texto-3;
+  }
+
+  .kpi-valor {
+    @apply mt-1.5 font-mono text-xl font-semibold tabular-nums tracking-tight;
+  }
+
+  .kpi-nota {
+    @apply mt-1 text-xs text-texto-3 leading-snug;
+  }
+
+  /* ---------- layout ---------- */
+  .wrap {
+    @apply mx-auto w-full max-w-conteudo px-4 sm:px-6 lg:px-8;
+  }
+
+  .secao {
+    @apply py-12 sm:py-16 border-t border-borda;
+  }
+
+  .grade-2 {
+    @apply grid gap-5 lg:grid-cols-2;
+  }
+
+  .grade-3 {
+    @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  .grade-kpi {
+    @apply grid gap-3 grid-cols-2 lg:grid-cols-4;
+  }
+}
+
+/* ---------- animações ---------- */
+@keyframes surge {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.surge {
+  animation: surge 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ---------- barra de rolagem ---------- */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--cor-borda-forte);
+  border-radius: 6px;
+  border: 2px solid var(--cor-tela);
+}
+
+/* ---------- acessibilidade ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .nao-imprime { display: none !important; }
+  body { background: #fff; color: #000; }
+}

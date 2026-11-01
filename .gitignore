@@ -1,0 +1,24 @@
+# Dados brutos e artefatos gerados não entram no controle de versão.
+# Os coletores baixam tudo de novo, e o pacote de saída é reprodutível.
+
+pipeline/raw/
+pipeline/out/
+web/public/dados.json
+web/dist/
+web/node_modules/
+.tmp/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Exceção: os scripts de diagnóstico ficam versionados, porque documentam
+# como cada número foi conferido.
+!pipeline/_debug*.py
