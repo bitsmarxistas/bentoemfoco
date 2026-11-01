@@ -9,23 +9,32 @@
    ============================================================ */
 
 :root {
+  /* Paleta — identidade Observatório do Orçamento */
   --cor-tela: #FBFAF7;
   --cor-superficie: #FFFFFF;
   --cor-superficie-2: #F5F3EE;
   --cor-borda: #E5E1D8;
   --cor-borda-forte: #D2CCBE;
+
   --cor-texto: #1A1A17;
   --cor-texto-2: #57534A;
   --cor-texto-3: #857F72;
 
+  /* Acento verde fiscalização — controle social e transparência */
   --cor-acento: #1F6B3A;
   --cor-acento-suave: #E8F2EA;
+
+  /* Semântica */
   --cor-positivo: #1F6B3A;
   --cor-positivo-suave: #E8F2EA;
   --cor-negativo: #9B2C2C;
   --cor-negativo-suave: #FBE9E9;
   --cor-alerta: #96610A;
   --cor-alerta-suave: #FBF1DA;
+
+  /* Marca */
+  --marca-monograma: #1F6B3A;
+  --marca-fundo: #141412;
 }
 
 html[data-tema='escuro'] {
@@ -34,18 +43,23 @@ html[data-tema='escuro'] {
   --cor-superficie-2: #26251F;
   --cor-borda: #33322B;
   --cor-borda-forte: #474538;
+
   --cor-texto: #F2F0E9;
   --cor-texto-2: #B5B0A3;
   --cor-texto-3: #8A8578;
 
   --cor-acento: #6FBF86;
   --cor-acento-suave: #1F2E23;
+
   --cor-positivo: #6FBF86;
   --cor-positivo-suave: #1F2E23;
   --cor-negativo: #E89490;
   --cor-negativo-suave: #33201F;
   --cor-alerta: #E0B05A;
   --cor-alerta-suave: #322816;
+
+  --marca-monograma: #6FBF86;
+  --marca-fundo: #FBFAF7;
 }
 
 @layer base {

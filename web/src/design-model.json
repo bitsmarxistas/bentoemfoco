@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "architecture": {
+    "nodes": [
+      "design-system",
+      "tema",
+      "acessibilidade",
+      "componentes-base",
+      "componentes-compostos",
+      "graficos",
+      "layout",
+      "secoes"
+    ],
+    "edges": [
+      ["design-system", "tema"],
+      ["design-system", "acessibilidade"],
+      ["design-system", "componentes-base"],
+      ["tema", "acessibilidade"],
+      ["tema", "graficos"],
+      ["acessibilidade", "componentes-base"],
+      ["componentes-base", "componentes-compostos"],
+      ["componentes-base", "layout"],
+      ["componentes-compostos", "graficos"],
+      ["componentes-compostos", "secoes"],
+      ["graficos", "secoes"],
+      ["layout", "secoes"],
+      ["acessibilidade", "graficos"]
+    ]
+  },
+  "types": [
+    {
+      "name": "DesignSystem",
+      "stereotype": "component",
+      "layer": "foundation",
+      "responsibilities": ["tokens", "paleta", "tipografia", "espacamento", "bordas", "sombras", "animacoes"],
+      "uses": ["Tema", "Acessibilidade"]
+    },
+    {
+      "name": "Tema",
+      "stereotype": "component",
+      "layer": "foundation",
+      "responsibilities": ["variaveis-css", "modo-claro", "modo-escuro", "paleta-graficos"],
+      "uses": ["DesignSystem", "Acessibilidade"]
+    },
+    {
+      "name": "Acessibilidade",
+      "stereotype": "component",
+      "layer": "foundation",
+      "responsibilities": ["contraste", "foco-visivel", "reduced-motion", "skip-links", "aria", "print"],
+      "uses": []
+    },
+    {
+      "name": "ComponentesBase",
+      "stereotype": "component",
+      "layer": "ui",
+      "responsibilities": ["cartao", "botao", "entrada", "rotulo", "tabela", "kpi", "etiqueta", "eyebrow", "titulo-secao"],
+      "uses": ["DesignSystem", "Tema", "Acessibilidade"]
+    },
+    {
+      "name": "ComponentesCompostos",
+      "stereotype": "component",
+      "layer": "ui",
+      "responsibilities": ["cabecalho", "carregador", "grafico-wrapper", "tooltip", "legenda"],
+      "uses": ["ComponentesBase", "Tema", "Graficos"]
+    },
+    {
+      "name": "Graficos",
+      "stereotype": "component",
+      "layer": "ui",
+      "responsibilities": ["base-echarts", "eixos", "series", "calor", "categorico", "acessibilidade-graficos"],
+      "uses": ["Tema", "DesignSystem", "Acessibilidade"]
+    },
+    {
+      "name": "Secoes",
+      "stereotype": "component",
+      "layer": "features",
+      "responsibilities": ["hero", "mapa-gasto", "execucao", "receitas", "compras", "pessoal", "divida", "camara", "auditoria", "metodologia"],
+      "uses": ["ComponentesBase", "ComponentesCompostos", "Graficos", "Layout"]
+    },
+    {
+      "name": "Layout",
+      "stereotype": "component",
+      "layer": "features",
+      "responsibilities": ["wrap", "secao", "grade", "scroll", "sticky-header", "footer"],
+      "uses": ["DesignSystem"]
+    }
+  ],
+  "declare": {
+    "layers": [
+      { "name": "foundation", "members": ["DesignSystem", "Tema", "Acessibilidade"] },
+      { "name": "ui", "members": ["ComponentesBase", "ComponentesCompostos", "Graficos"] },
+      { "name": "features", "members": ["Secoes", "Layout"] }
+    ],
+    "boundaries": [
+      { "id": "foundation-ui", "members": ["DesignSystem", "Tema", "Acessibilidade"], "allow": ["ui"], "deny": ["features"] },
+      { "id": "ui-features", "members": ["ComponentesBase", "ComponentesCompostos", "Graficos"], "allow": ["features"], "deny": [] }
+    ],
+    "allowedEdges": [
+      { "id": "foundation-to-ui", "source": "foundation", "allow": ["ui"] },
+      { "id": "ui-to-features", "source": "ui", "allow": ["features"] }
+    ],
+    "requiredEdges": [
+      { "id": "acessibilidade-cross", "source": "Acessibilidade", "require": ["ComponentesBase", "Tema", "Graficos"] }
+    ]
+  }
+}

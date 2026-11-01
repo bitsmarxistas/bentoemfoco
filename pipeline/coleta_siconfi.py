@@ -29,9 +29,15 @@ from dataclasses import dataclass
 from typing import Any
 
 BASE = "https://apidatalake.tesouro.gov.br/ords/cdwhprd/siconfi/tt"
-IBGE = 4302105
-UA = {"User-Agent": "observatorio-orcamento-bg/2.0 (uso educacional e de controle social)"}
-ANOS = [2020, 2021, 2022, 2023, 2024, 2025]
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+CONFIG = os.path.join(os.path.dirname(AQUI), "config", "municipio.json")
+with open(CONFIG, encoding="utf-8") as f:
+    CFG = json.load(f)
+
+IBGE = CFG["ibge"]
+UA = {"User-Agent": f"observatorio-orcamento-{CFG['municipio'].lower().replace(' ', '-')}/2.0 (uso educacional e de controle social)"}
+ANOS = CFG.get("anos", [2020, 2021, 2022, 2023, 2024, 2025])
 LIMITE = 5000
 TENTATIVAS = 4
 TIMEOUT = 300

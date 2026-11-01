@@ -33,10 +33,20 @@ from dataclasses import dataclass, field
 from typing import Any
 
 BASE = "https://bentogoncalves.oxy.elotech.com.br/portaltransparencia-api"
-UA = "observatorio-orcamento-bg/2.0 (uso educacional e controle social)"
-ANOS = [2020, 2021, 2022, 2023, 2024, 2025]
-ANO_CORRENTE = 2026
-ENTIDADES = [1, 2]
+
+AQUI = os.path.dirname(os.path.abspath(__file__))
+CONFIG = os.path.join(os.path.dirname(AQUI), "config", "municipio.json")
+with open(CONFIG, encoding="utf-8") as f:
+    CFG = json.load(f)
+
+UA = f"observatorio-orcamento-{CFG['municipio'].lower().replace(' ', '-')}/2.0 (uso educacional e controle social)"
+ANOS = CFG.get("anos", [2020, 2021, 2022, 2023, 2024, 2025])
+ANO_CORRENTE = CFG.get("anoCorrente", 2026)
+
+PORTAL_CFG = CFG.get("portalTransparencia", {})
+if PORTAL_CFG.get("baseUrl"):
+    BASE = PORTAL_CFG["baseUrl"]
+ENTIDADES = PORTAL_CFG.get("entidades", [1])
 PAGINA = 500          # a API limita o tamanho real da página; ajustamos abaixo
 TENTATIVAS = 4
 TIMEOUT = 180

@@ -7,8 +7,10 @@ export default defineConfig({
     port: 5180,
     open: false,
   },
+  base: '/bentoemfoco/',
   build: {
     outDir: 'dist',
+    emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
       output: {

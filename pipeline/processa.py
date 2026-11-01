@@ -28,6 +28,11 @@ from typing import Any, Iterable
 import classificacao as cls
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
+CONFIG = os.path.join(os.path.dirname(AQUI), "config", "municipio.json")
+
+with open(CONFIG, encoding="utf-8") as f:
+    CFG = json.load(f)
+
 RAW_SIC = os.path.join(AQUI, "raw", "siconfi")
 RAW_BG = os.path.join(AQUI, "raw", "bg")
 OUT = os.path.join(AQUI, "out")
@@ -35,11 +40,12 @@ OUT = os.path.join(AQUI, "out")
 # em web/public/. As duas cópias são idênticas e saem do mesmo dump.
 PUBLIC_WEB = os.path.join(os.path.dirname(AQUI), "web", "public")
 
-ANOS = [2020, 2021, 2022, 2023, 2024, 2025]
-ANO_CORRENTE = 2026
-IBGE = 4302105
-MUNICIPIO = "Bento Gonçalves"
-UF = "RS"
+ANOS = CFG.get("anos", [2020, 2021, 2022, 2023, 2024, 2025])
+ANO_CORRENTE = CFG.get("anoCorrente", 2026)
+IBGE = CFG["ibge"]
+MUNICIPIO = CFG["municipio"]
+UF = CFG["uf"]
+PORTAL_CFG = CFG.get("portalTransparencia", {})
 
 
 # --------------------------------------------------------------------------
@@ -1269,9 +1275,15 @@ def principal() -> int:
             "gerado_em": date.today().isoformat(),
             "fontes": [
                 "SICONFI / Tesouro Nacional (RREO, RGF, DCA)",
-                "Portal de Transparência de Bento Gonçalves (API ELO Tech)",
+                f"Portal de Transparência de {MUNICIPIO} (API {PORTAL_CFG.get('provider', 'ELO Tech')})",
             ],
             "populacao": indicadores["populacao"],
+            "portal": {
+                "provider": PORTAL_CFG.get("provider"),
+                "baseUrl": PORTAL_CFG.get("baseUrl"),
+                "entidade": PORTAL_CFG.get("entidade"),
+            },
+            "config": CFG,
         },
         "execucao": {
             "funcoes": anexo02["funcoes"],

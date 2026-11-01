@@ -1,0 +1,14 @@
+{
+  "municipio": "Bento Gonçalves",
+  "uf": "RS",
+  "ibge": 4302105,
+  "portalTransparencia": {
+    "provider": "elotech",
+    "baseUrl": "https://bentogoncalves.oxy.elotech.com.br/portaltransparencia-api",
+    "entidade": 1
+  },
+  "anos": [2020, 2021, 2022, 2023, 2024, 2025],
+  "anoCorrente": 2026,
+  "nomeExibicao": "Observatório do Orçamento de Bento Gonçalves",
+  "descricao": "Para onde vai o dinheiro de Bento Gonçalves: orçamento, execução, compras públicas, pessoal, receitas e dívida — de 2020 a 2025, a partir de dados abertos oficiais."
+}

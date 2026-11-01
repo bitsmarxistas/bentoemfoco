@@ -22,9 +22,16 @@ import { Auditoria } from './secoes/Auditoria';
 import { Metodologia } from './secoes/Metodologia';
 
 function Conteudo({ d }: { d: Dados }) {
+  // Define o título da página com base nos dados carregados, para que o
+  // mesmo build sirva a qualquer município.
+  document.title = `Observatório do Orçamento — ${d.meta.municipio}/${d.meta.uf}`;
+
   return (
     <>
-      <Cabecalho municipio={d.meta.municipio} uf={d.meta.uf} />
+      <Cabecalho
+        municipio={d.meta.municipio}
+        uf={d.meta.uf}
+      />
       <main id="topo">
         <Hero d={d} />
         <MapaGasto d={d} />
@@ -43,13 +50,14 @@ function Conteudo({ d }: { d: Dados }) {
             Observatório do Orçamento de {d.meta.municipio}
           </p>
           <p className="mt-1 max-w-2xl text-xs leading-relaxed text-texto-3">
-            Análise independente sobre dados públicos. Fontes: SICONFI/Tesouro
-            Nacional e Portal de Transparência municipal. Uso educacional e de
-            controle social. Verifique sempre a fonte oficial antes de decisões
-            formais.
+            Análise independente sobre dados públicos. Fontes:{' '}
+            {d.meta.fontes.join('; ')}. Uso educacional e de controle social.
+            Verifique sempre a fonte oficial antes de decisões formais.
           </p>
           <p className="mt-3 font-mono text-2xs text-texto-3">
-            Dados gerados em {d.meta.gerado_em} · valores em reais correntes
+            Município: {d.meta.municipio}/{d.meta.uf} (IBGE {d.meta.ibge}) ·
+            anos {d.meta.anos.join('–')} · dados gerados em{' '}
+            {d.meta.gerado_em} · valores em reais correntes
           </p>
         </div>
       </footer>

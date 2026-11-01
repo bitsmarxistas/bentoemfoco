@@ -50,11 +50,11 @@ export function Cabecalho({ municipio, uf }: { municipio: string; uf: string }) 
     <header className="sticky top-0 z-40 border-b border-borda bg-tela/85 backdrop-blur-md nao-imprime">
       <div className="wrap flex h-16 items-center justify-between gap-4">
         <a href="#topo" className="flex shrink-0 items-center gap-2.5">
-          <span className="grid h-9 w-9 place-items-center rounded-[10px] bg-acento font-mono text-xs font-bold text-white">
-            BG
+          <span className="grid h-10 w-10 place-items-center rounded-[12px] bg-acento font-serif text-xs font-bold text-white leading-none">
+            OO
           </span>
           <span className="hidden sm:block">
-            <span className="block font-serif text-[15px] font-semibold leading-tight">
+            <span className="block font-serif text-[16px] font-semibold leading-tight tracking-tight">
               Observatório do Orçamento
             </span>
             <span className="block text-2xs uppercase tracking-wider text-texto-3">
