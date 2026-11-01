@@ -408,7 +408,134 @@ def processa_dca(anexo02: dict) -> dict:
 
 
 # --------------------------------------------------------------------------
-# 3. RREO Anexo 01 — balanço orçamentário (receitas e despesas por categoria)
+# 3b. Creditos adicionais — natureza da despesa por subfunção
+# --------------------------------------------------------------------------
+
+# Elemento da despesa (2º nível da classificação econômica):
+# 3.xxx = Pessoal e encargos, 4.xxx = Custeio, 5.xxx = Juros, etc.
+ELEMENTO_NATUREZA: dict[str, str] = {
+    "1": "Despesas de capital",
+    "2": "Amortização da dívida",
+    "3": "Despesas correntes",
+    "4": "Custeio",
+    "5": "Juros e encargos da dívida",
+    "6": "Inversões financeiras",
+    "7": "Outras despesas correntes",
+    "8": "Reserva de contingência",
+    "9": "Outras despesas de capital",
+}
+
+
+def _elemento_da_conta(conta_codigo: str) -> str | None:
+    """Extrai o elemento da despesa (2º nível) do código completo.
+
+    O código da despesa segue o padrão:
+      função.subfunção.programa.acao.elemento.subgrupo.grupo.modalidade...
+    O elemento é o 4º bloco (após o 3º ponto).
+    """
+    partes = conta_codigo.split(".")
+    if len(partes) >= 4:
+        return partes[3]
+    return None
+
+
+def processa_creditos_natureza(anexo02: dict) -> dict:
+    """
+    Cruzamento natureza da despesa × subfunção via créditos adicionais.
+
+    O RREO-Anexo 02 classifica despesa por função/subfunção, mas não traz
+    natureza (pessoal × custeio × investimento). O Anexo I-D da DCA traz
+    natureza, mas sem subfunção. O Portal municipal também não cruza os dois
+    eixos.
+
+    Os créditos adicionais do portal, no entanto, trazem o campo `despesa`
+    com a classificação completa:
+      função.subfunção.programa.acão.elemento...
+    Isso permite calcular, por subfunção, quanto de cada crédito adicional
+    se refere a pessoal (elemento 3), custeio (4), juros (5), etc.
+
+    Isso quebra a limitação documentada: hoje é impossível saber quanto de
+    "custeio" cada subfunção consumiu. Com os créditos adicionais, passa a
+    ser possível — pelo menos para as alterações orçamentárias.
+    """
+    padrao = re.compile(
+        r"^(\d{2})\.(\d{2})\.(\d{2})\.(\d{3})\.(\d{4})\.(\d)\.(\d{3})\."
+        r"(\d)\.(\d)\.(\d{2})\.(\d{2})"
+    )
+
+    # (função, subfunção, elemento) → ano → valor pago
+    cruzado: dict[tuple[int, int, str], dict[int, float]] = {}
+    cobertura: dict[int, dict] = {}
+    problemas: list[str] = []
+
+    for ano in ANOS:
+        registros = le_json(RAW_BG, f"creditosadicionais_{ano}")
+        if not registros:
+            problemas.append(f"Créditos adicionais de {ano} ausente")
+            cobertura[ano] = {"linhas": 0, "parseaveis": 0, "valor_pago": None}
+            continue
+
+        linhas = registros.get("content") or []
+        lidos = parseaveis = pagos = 0
+        valor_total = 0.0
+
+        for r in linhas:
+            despesa = str(r.get("despesa") or "")
+            m = padrao.match(despesa)
+            if not m:
+                continue
+            lidos += 1
+            parseaveis += 1
+
+            cod_f = int(m.group(1))
+            cod_s = int(m.group(2))
+            elemento = m.group(4)  # 4º bloco = elemento da despesa
+
+            # Coluna indica se é pagamento ou outra natureza do crédito.
+            coluna = str(r.get("coluna", ""))
+            valor = num(r.get("valor"))
+
+            # Só somamos quando o campo de valor existe e há indício de
+            # pagamento/liquidação. Os créditos adicionais não têm coluna
+            # de "despesas pagas"; usamos o valor bruto como proxy do
+            # impacto orçamentário da alteração.
+            if valor is not None:
+                chave = (cod_f, cod_s, elemento)
+                cruzado.setdefault(chave, {})[ano] = valor
+                pagos += 1
+                valor_total += valor
+
+        cobertura[ano] = {
+            "linhas": len(linhas),
+            "parseaveis": parseaveis,
+            "valor_pago": arred(valor_total),
+        }
+        if pagos == 0:
+            problemas.append(f"Créditos adicionais {ano}: nenhum valor parseável")
+
+    # Anexa o cruzado às subfunções do Anexo 02.
+    anexados = 0
+    for s in anexo02["subfuncoes"]:
+        if s["cod"] == cls.COD_AGREGADO:
+            continue
+        s["valores"].setdefault("creditos_natureza", {})
+        for ano in ANOS:
+            for (cf, cs, elemento), anos_map in cruzado.items():
+                if cf == s["cod_funcao"] and cs == s["cod"] and ano in anos_map:
+                    s["valores"]["creditos_natureza"].setdefault(ano, {})[
+                        elemento
+                    ] = anos_map[ano]
+                    anexados += 1
+
+    return {
+        "cobertura": cobertura,
+        "anexados": anexados,
+        "problemas": problemas,
+    }
+
+
+# --------------------------------------------------------------------------
+# 4. RREO Anexo 01 — balanço orçamentário (receitas e despesas por categoria)
 # --------------------------------------------------------------------------
 
 def _valor_conta(registros: list[dict], prefixo: str, coluna_contem: str) -> float | None:
@@ -1085,6 +1212,10 @@ def principal() -> int:
     dca = processa_dca(anexo02)
     print(f"  {dca['casados']} valores de pago anexados")
 
+    print("Processando créditos adicionais — natureza × subfunção...")
+    creditos_natureza = processa_creditos_natureza(anexo02)
+    print(f"  {creditos_natureza['anexados']} valores de natureza anexados")
+
     print("Processando RREO-Anexo 01 (balanço orçamentário)...")
     balanco = processa_balanco()
 
@@ -1124,8 +1255,8 @@ def principal() -> int:
 
     # Coleta todos os problemas relatados pelas etapas.
     problemas: list[str] = []
-    for bloco in (anexo02, dca, balanco, receitas_estrutura, rgf,
-                  pagamentos, compras, servidores, paineis, creditos):
+    for bloco in (anexo02, dca, creditos_natureza, balanco, receitas_estrutura,
+                  rgf, pagamentos, compras, servidores, paineis, creditos):
         problemas.extend(bloco.get("problemas") or [])
 
     pacote = {
@@ -1156,6 +1287,7 @@ def principal() -> int:
         "servidores": servidores,
         "paineis": paineis,
         "creditos": creditos,
+        "creditos_natureza": creditos_natureza,
         "obras_convenios": obras_convenios,
         "indicadores": indicadores,
         "problemas": problemas,
