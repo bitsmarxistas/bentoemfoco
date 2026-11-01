@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-tema="claro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Observatório do Orçamento — Bento Gonçalves/RS</title>
+    <meta
+      name="description"
+      content="Para onde vai o dinheiro de Bento Gonçalves: orçamento, execução, compras públicas, pessoal, receitas e dívida — de 2020 a 2025, a partir de dados abertos oficiais."
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      // Aplica o tema antes do primeiro paint, para não piscar branco.
+      (function () {
+        var salvo = localStorage.getItem('observatorio-tema');
+        var sistema = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro';
+        document.documentElement.dataset.tema = salvo || sistema;
+      })();
+    </script>
+    <script type="module" crossorigin src="/bentoemfoco/assets/index-BdaqgGpf.js"></script>
+    <link rel="modulepreload" crossorigin href="/bentoemfoco/assets/react-BRnhmgIC.js">
+    <link rel="modulepreload" crossorigin href="/bentoemfoco/assets/echarts-x2AjZxjf.js">
+    <link rel="stylesheet" crossorigin href="/bentoemfoco/assets/index-W_-X8MFJ.css">
+  </head>
+  <body>
+    <div id="raiz"></div>
+  </body>
+</html>
